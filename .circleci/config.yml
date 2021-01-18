@@ -1,0 +1,45 @@
+version: 2
+jobs:
+  build:
+    branches:
+        only:
+          - main
+          - dev
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "./custody_frontend/package.json" }}
+      - run: cd custody_frontend && npm install && npm run build
+      - save_cache:
+          key: dependency-cache-{{ checksum "./custody_frontend/package.json" }}
+          paths:
+            - ./custody_frontend/node_modules
+      - run: .circleci/qshell account ${QINIU_AK} ${QINIU_SK} ci
+      - run:
+          name: Publish
+          command: |
+            branchCurrent="${CIRCLE_BRANCH}"
+            branch1="onebtc1"
+            branch2="onebtc2"
+            branch3="onebtc3"
+            branch4="onebtc4"
+            if [ "$branchCurrent" == "$branch1" ]; then
+              bucket="onebtc1-us"
+            elif [ "$branchCurrent" == "$branch2" ]; then
+              bucket="onebtc2"
+            elif [ "$branchCurrent" == "$branch3" ]; then
+              bucket="onebtc3"
+            elif [ "$branchCurrent" == "$branch4" ]; then
+              bucket="onebtc4-us"
+              cd custody_frontend && npm run build:cdn-test4 && cd -
+            else
+              bucket="custody"
+            fi
+            .circleci/qshell qupload2 --src-dir=custody_frontend/dist --bucket="$bucket" --overwrite --thread-count 5
+      - run: .circleci/qshell cdnrefresh -i .circleci/torefresh.txt
+      - run: .circleci/qshell cdnrefresh --dirs -i .circleci/torefresh.txt
+notify:
+  webhooks:
+    - url: https://hook.bearychat.com/=bw9Gj/circleci/69ef21d626d508766394cd8ce705d6fe

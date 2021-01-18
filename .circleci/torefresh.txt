@@ -1,0 +1,3 @@
+http://custody.iamkun.com/
+http://custody.iamkun.com/index.html
+http://custody.iamkun.com/version.json
