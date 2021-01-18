@@ -1,0 +1,26 @@
+# from python:3
+FROM ubuntu:latest
+
+# NOTE: ubuntu mirror cn
+RUN  sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+RUN  apt-get clean
+
+RUN apt-get update \
+  && apt-get install -y python3-pip python3-dev \
+  && cd /usr/local/bin \
+  && ln -s /usr/bin/python3 python \
+  && pip3 install --upgrade pip
+
+RUN apt-get update && apt-get install -y vim
+
+WORKDIR /app/custody_backend
+ADD requirements /app/custody_backend/requirements
+
+# NOTE: python mirror cn
+COPY pip.conf /etc/pip.conf
+
+
+# execute everyone's favorite pip command, pip install -r
+RUN pip install  -r requirements/prod.txt
+
+CMD ["python3", "-V"]

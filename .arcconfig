@@ -1,0 +1,8 @@
+{
+  "phabricator.uri" : "https://code.sophontech.com/",
+  "project.name" : "Crypto Info Site",
+  "project_id" : 6,
+  "load": [
+  ],
+  "unit.engine": ""
+}
