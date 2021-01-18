@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no,minimal-ui"
+    />
+    <title>Meta Video Search</title>
+    <!-- <link rel="stylesheet" href="test.css"> -->
+    <style>
+      .dark-primary-color {
+        background: #0288d1;
+      }
+      .default-primary-color {
+        background: #03a9f4;
+      }
+      .light-primary-color {
+        background: #b3e5fc;
+      }
+      .text-primary-color {
+        color: #ffffff;
+      }
+      .accent-color {
+        background: #ff4081;
+      }
+      .primary-text-color {
+        color: #212121;
+      }
+      .secondary-text-color {
+        color: #757575;
+      }
+      .divider-color {
+        border-color: #bdbdbd;
+      }
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif, "Helvetica Neue";
+        font-size: 14px;
+        color: #212121;
+        background-color: #fff;
+        margin: 0 auto;
+        -webkit-font-smoothing: antialiased;
+      }
+      :root {
+        --primaryColorLight: #b3e5fc;
+        --primaryColor: #03a9f4;
+        --primaryColorDark: #03a9f4;
+      }
+      a {
+        color: #757575;
+      }
+      a:visited {
+        color: #757575;
+      }
+      ul,
+      ol,
+      dl,
+      li,
+      dt,
+      dd {
+        list-style: none;
+      }
+      .hide {
+        display: none;
+      }
+      .content {
+        display: flex;
+        height: 100%;
+      }
+      .side-bar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 200px;
+        padding: 0 20px;
+        border-right: 1px solid var(--primaryColor);
+        background: #FFF;
+      }
+      .main {
+        flex: 1;
+        display: flex;
+      }
+      .main iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+      .main .screen {
+        flex: 1;
+        padding: 0 1px;
+        border-right: 1px solid var(--primaryColor);
+      }
+      .title {
+        text-align: center;
+        font-size: 16px;
+        padding: 40px 0;
+      }
+      .search-input input {
+        width: 100%;
+        height: 35px;
+        box-sizing: border-box;
+        padding-left: 10px;
+        font-size: 16px;
+      }
+      .search-input .history {
+        font-size: 12px;
+        margin-top: 10px;
+      }
+      .search-input .history .history-list {
+        display: inline;
+      }
+      .search-input .history span {
+        cursor: pointer;
+        margin: 0 5px;
+        color: var(--primaryColorLight);
+        border-bottom: 1px solid var(--primaryColorLight);
+        max-width: 35px;
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: text-bottom;
+      }
+      .tip {
+        font-size: 10px;
+        text-align: right;
+        position: absolute;
+        bottom: 10px;
+        right: 20px;
+      }
+      .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--primaryColor);
+        width: 20px;
+        height: 20px;
+        color: #FFF;
+        font-size: 18px;
+        line-height: 18px;
+        text-align: center;
+        cursor: pointer;
+      }
+      .show-button {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: var(--primaryColor);
+        height: 20px;
+        padding: 5px;
+        color: #FFF;
+        font-size: 18px;
+        text-align: center;
+        cursor: pointer;
+        border-right: 1px solid #FFF;
+        border-bottom: 1px solid #FFF;
+      }
+      .target-list {
+        margin-top: 30px;
+      }
+      .target-list ul li {
+        padding: 10px;
+        margin: 10px 0;
+        text-align: center;
+        cursor: pointer;
+        font-size: 18px;
+      }
+      .target-list ul li[disabled] {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+      .target-list ul li.active {
+        background: var(--primaryColorDark);
+        color: #FFF;
+      }
+      .target-list ul li:not(.active):hover {
+        background: var(--primaryColorLight);
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <div class="side-bar el-side-bar">
+        <div class="title">
+          Meta Video Search
+        </div>
+        <div class="search-input">
+          <input
+            class="el-search-input"
+            placeholder="Press enter to search ..."
+          />
+          <div class="history hide el-history">
+            History:
+            <div class="history-list el-history-list"></div>
+          </div>
+        </div>
+        <div class="target-list el-target-list">
+          <ul>
+            <li data-name="bilibili" class="active">Bilibili</li>
+            <li data-name="douyin">Douyin</li>
+            <li data-name="kuaishou">Kuaishou</li>
+            <li data-name="youtube">Youtube</li>
+            <li data-name="instagram">Instagram</li>
+          </ul>
+        </div>
+        <div class="tip">
+          <a
+            href="https://chrome.google.com/webstore/detail/ignore-x-frame-headers/gleekbfjekiniecknbkamfmkohkpodhe?hl=en-US"
+            target="_blank"
+          >
+            Click to download Chrome Extension
+            <br />
+            Ignore X-Frame headers
+          </a>
+        </div>
+        <div class="close el-close">
+          x
+        </div>
+      </div>
+      <div class="hide show-button el-show-button">
+        SideBar
+      </div>
+      <div class="main el-main"></div>
+      <div class="hide el-clone">
+        <div class="screen el-screen">
+          <iframe></iframe>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.bootcss.com/zepto/1.0rc1/zepto.min.js"></script>
+    <script>
+      const USER_SEARCH_WORDS = "USER_SEARCH_WORDS";
+      let keyWord = "";
+      const replaceSearchToken = "SEARCH_TOKEN";
+      const searchUrlMap = {
+        bilibili: `https://search.bilibili.com/all?keyword=${replaceSearchToken}`,
+        douyin: `https://dy.feigua.cn/Member#/Blogger/Search?keyword=${replaceSearchToken}`,
+        kuaishou: `https://ks.feigua.cn/Member#/Blogger/Search?keyword=${replaceSearchToken}`,
+        youtube: `https://www.youtube.com/results?search_query=${replaceSearchToken}`,
+        instagram: `https://www.google.com/search?q=site:instagram.com+${replaceSearchToken}`,
+      };
+      const getSearchUrl = target => {
+        return searchUrlMap[target].replace(replaceSearchToken, keyWord);
+      };
+      const getAllActiveScreen = () => {
+        return $(".el-main .el-screen");
+      };
+      const getActiveScreenByTarget = target => {
+        const result = getAllActiveScreen().map((i, s) => {
+          const name = $(s).data("name");
+          if (name === target) return s;
+        });
+        return result[0];
+      };
+      const makeScreen = target => {
+        const el = $(".el-clone")
+          .find(".el-screen")
+          .clone()
+          .data("name", target);
+        el.appendTo(".el-main");
+        return el;
+      };
+      const updateScreenIframeByTarget = (targetScreen, target) => {
+        $(targetScreen)
+          .find("iframe")
+          .attr("src", getSearchUrl(target));
+      };
+      const updateAllScreen = () => {
+        getAllActiveScreen().forEach(s => {
+          updateScreenIframeByTarget(s, $(s).data("name"));
+        });
+      };
+      const updateScreenByTarget = target => {
+        if (!keyWord) return;
+        let targetScreen = getActiveScreenByTarget(target);
+        if (!targetScreen) {
+          targetScreen = makeScreen(target);
+        }
+        updateScreenIframeByTarget(targetScreen, target);
+      };
+      const getLocalKeyWord = () => {
+        const w = localStorage.getItem(USER_SEARCH_WORDS);
+        if (!w) return;
+        try {
+          return JSON.parse(w);
+        } catch (e) {
+          consolw.error(e);
+          return;
+        }
+      };
+      const saveKeyWordToLocal = () => {
+        const locale = getLocalKeyWord();
+        let saveContent = [keyWord];
+        if (locale) {
+          saveContent = saveContent.concat(locale);
+        }
+        saveContent = saveContent.slice(0, 3);
+        localStorage.setItem(USER_SEARCH_WORDS, JSON.stringify(saveContent));
+      };
+      const displayLocalKeyWord = (isInit = false) => {
+        const localWordArr = getLocalKeyWord();
+        if (!localWordArr) return;
+        $(".el-history").show();
+        $(".el-history .el-history-list").empty();
+        localWordArr.forEach((w, i) => {
+          if (isInit && i === 0) {
+            onHistoryClick(w)
+          }
+          $(document.createElement("span"))
+            .text(w)
+            .appendTo($(".el-history .el-history-list"));
+        });
+      };
+      const onHistoryClick = kw => {
+        $(".el-search-input").val(kw);
+        keyWord = kw;
+        updateAllScreen();
+      };
+      $(".el-history-list").on("click", "span", e => {
+        onHistoryClick($(e.target).text());
+      });
+      $(".el-search-input").on("input", e => {
+        keyWord = e.target.value;
+      });
+      $(".el-search-input").keypress(event => {
+        if (event.keyCode == 13) {
+          updateAllScreen();
+          saveKeyWordToLocal();
+          displayLocalKeyWord();
+        }
+      });
+      $(".el-target-list li").on("click", e => {
+        if (!keyWord) return;
+        const clickTarget = $(e.target);
+        const isActive = clickTarget.hasClass("active");
+        clickTarget.toggleClass("active");
+        const clickTargetName = clickTarget.data("name");
+        if (isActive) {
+          getActiveScreenByTarget(clickTargetName).remove();
+          return;
+        }
+        updateScreenByTarget(clickTargetName);
+      });
+      $(".el-close").on("click", e => {
+        $('.el-side-bar').hide()
+        $('.el-show-button').show()
+      });
+      $(".el-show-button").on("click", e => {
+        $('.el-side-bar').show()
+        $('.el-show-button').hide()
+      });
+      makeScreen("bilibili");
+      displayLocalKeyWord(true);
+    </script>
+  </body>
+</html>
